@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "cd backend && npm run dev",
     "start": "cd backend && npm start",
-    "build": "echo 'No build process needed - static site'",
     "serve": "python -m http.server 8000",
     "install-backend": "cd backend && npm install"
   },

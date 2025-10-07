@@ -1,0 +1,17 @@
+{
+    "name": "Mostafa Eslam - AI Engineer Portfolio",
+    "short_name": "Mostafa Portfolio",
+    "description": "AI Engineer Portfolio showcasing machine learning projects and skills",
+    "icons": [
+        {
+            "src": "TapLogo.png",
+            "sizes": "any",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#9d174d",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "start_url": "/",
+    "scope": "/"
+}

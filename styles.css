@@ -149,29 +149,9 @@ body {
   color: #9d174d;
 }
 
-.nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #9d174d;
-  transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-  width: 100%;
-}
-
 .nav-link.active {
   color: #9d174d !important;
   font-weight: 800;
-}
-
-.nav-link.active::after {
-  width: 100%;
-  background: #9d174d;
 }
 
 .nav-toggle {
@@ -201,7 +181,7 @@ body {
   background: linear-gradient(
       135deg,
       rgba(102, 126, 234, 0.8) 0%,
-      rgba(118, 75, 162, 0.285) 100%
+      rgba(130, 126, 134, 0.746) 100%
     ),
     url("./Photos/Home-Background.jpg") center/cover no-repeat;
   background-attachment: scroll;
@@ -437,6 +417,11 @@ body {
 
 .btn-cv i {
   font-size: 0.9rem;
+}
+
+/* Sharp button styling for Send Message button */
+.btn-sharp {
+  border-radius: 5px !important;
 }
 
 /* About Center Column */
