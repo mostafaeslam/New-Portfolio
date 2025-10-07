@@ -15,8 +15,7 @@ A modern, responsive portfolio website showcasing AI/ML projects and skills. Bui
 
 ## 🚀 Live Demo
 
-- **Frontend**: [Your Portfolio URL]
-- **Backend API**: [Your API URL]
+- **Frontend**: [https://mostafaeslam.github.io/New-Portfolio]
 
 ## 📁 Project Structure
 
@@ -59,7 +58,7 @@ Portfolic/
 ## 🚀 Quick Start
 
 
-![About Section](About.png)
+!(Photos/About.png)
 
 
 ### Prerequisites
