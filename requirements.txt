@@ -1,0 +1,13 @@
+# Backend Dependencies (Node.js)
+# Install with: npm install
+
+# Frontend Dependencies (if needed)
+# No additional dependencies required - pure HTML/CSS/JS
+
+# Development Dependencies (optional)
+# nodemon - for development server with auto-reload
+# npm install -g nodemon
+
+# Production Dependencies
+# All dependencies are listed in backend/package.json
+# Run: cd backend && npm install

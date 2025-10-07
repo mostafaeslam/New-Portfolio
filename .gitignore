@@ -10,6 +10,11 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
+
+# API Keys and Secrets
+config/secrets.js
+secrets.json
 
 # IDE files
 .vscode/
