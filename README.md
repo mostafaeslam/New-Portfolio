@@ -58,7 +58,7 @@ Portfolic/
 ## 🚀 Quick Start
 
 
-!(Photos/About.png)
+![View](Photos/About.png)
 
 
 ### Prerequisites
