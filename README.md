@@ -1,5 +1,6 @@
 # Mostafa Eslam - AI Engineer Portfolio
 
+
 A modern, responsive portfolio website showcasing AI/ML projects and skills. Built with pure HTML, CSS, and JavaScript for optimal performance.
 
 ## 🌟 Features
@@ -57,6 +58,10 @@ Portfolic/
 
 ## 🚀 Quick Start
 
+
+![About Section](About.png)
+
+
 ### Prerequisites
 - Node.js (v16 or higher)
 - npm or yarn
@@ -65,7 +70,7 @@ Portfolic/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/portfolio.git
+git clone https://github.com/mostafaeslam/New-Portfolio.git
 cd portfolio
 ```
 
