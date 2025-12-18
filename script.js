@@ -257,11 +257,42 @@ document.querySelectorAll(".project-card").forEach((card) => {
   });
 });
 
+// Get API URL from meta tag or environment
+function getApiUrl() {
+  // Check for meta tag first
+  const metaTag = document.querySelector('meta[name="contact-api-url"]');
+  if (metaTag && metaTag.content && metaTag.content.trim()) {
+    return metaTag.content.trim();
+  }
+
+  // Check for window variable
+  if (window.CONTACT_API_URL) {
+    return window.CONTACT_API_URL;
+  }
+
+  // Auto-detect: if not localhost, assume same origin for API
+  const hostname = window.location.hostname;
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://localhost:3001";
+  }
+
+  // In production, try same origin (useful if backend is on same domain)
+  // Otherwise, you need to set the meta tag with your backend URL
+  return window.location.origin;
+}
+
 // Contact form handling
 const contactForm = document.getElementById("contact-form");
 if (contactForm) {
   contactForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+
+    // Show loading state
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = "Sending...";
+
     // Client-side validation, then POST to backend
     const formData = new FormData(this);
     const name = formData.get("name");
@@ -271,35 +302,86 @@ if (contactForm) {
 
     if (!name || !email || !subject || !message) {
       showNotification("Please fill in all fields", "error");
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
       return;
     }
 
     if (!isValidEmail(email)) {
       showNotification("Please enter a valid email address", "error");
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
       return;
     }
+
+    const apiUrl = getApiUrl();
+    const endpoint = `${apiUrl}/api/contact`;
+
     try {
-      const res = await fetch(
-        (window.CONTACT_API_URL || "http://localhost:3001") + "/api/contact",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, subject, message }),
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, subject, message }),
+      });
+
+      // Try to read response body to show a helpful message when available
+      let data = null;
+      try {
+        const text = await res.text();
+        if (text) {
+          data = JSON.parse(text);
         }
-      );
-      if (!res.ok) {
-        throw new Error("Request failed");
+      } catch (e) {
+        // If response is not JSON, that's okay
+        console.warn("Response is not JSON:", e);
       }
+
+      if (!res.ok) {
+        let errMsg = "Failed to send message. Please try again later.";
+
+        if (res.status === 0 || res.status >= 500) {
+          errMsg =
+            "Server error. Please check if the backend is running and try again.";
+        } else if (res.status === 404) {
+          errMsg =
+            "API endpoint not found. Please check the API URL configuration.";
+        } else if (res.status === 400) {
+          errMsg =
+            data?.errors?.[0]?.msg ||
+            data?.error ||
+            data?.message ||
+            "Invalid form data. Please check your input.";
+        } else if (data?.error || data?.message) {
+          errMsg = data.error || data.message;
+        }
+
+        showNotification(errMsg, "error");
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+        return;
+      }
+
       showNotification(
         "Message sent successfully! I'll get back to you soon.",
         "success"
       );
       this.reset();
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
     } catch (err) {
-      showNotification(
-        "Failed to send message. Please try again later.",
-        "error"
-      );
+      // Network-level or unexpected error
+      let errMsg = "Failed to send message. Please try again later.";
+
+      if (err.name === "TypeError" && err.message.includes("fetch")) {
+        errMsg = `Cannot connect to the server. Please check if the backend is running at ${apiUrl}. If deployed, make sure the API URL is configured correctly.`;
+      } else if (err.message) {
+        errMsg = err.message;
+      }
+
+      console.error("Contact form error:", err);
+      showNotification(errMsg, "error");
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
     }
   });
 }
