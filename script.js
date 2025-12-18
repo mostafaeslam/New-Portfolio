@@ -315,7 +315,12 @@ if (contactForm) {
     }
 
     const apiUrl = getApiUrl();
-    const endpoint = `${apiUrl}/api/contact`;
+    // If on GitHub Pages, apiUrl will be the origin, but we need a backend
+    // If on Vercel, apiUrl will be the origin and /api/contact will work
+    const endpoint =
+      apiUrl === window.location.origin
+        ? `${apiUrl}/api/contact` // Same origin (Vercel serverless function)
+        : `${apiUrl}/api/contact`; // Different origin (separate backend)
 
     try {
       const res = await fetch(endpoint, {

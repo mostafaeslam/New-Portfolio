@@ -33,5 +33,7 @@
     "node": ">=16.0.0"
   },
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "nodemailer": "^6.9.13"
+  }
 }
