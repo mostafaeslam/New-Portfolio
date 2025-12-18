@@ -10,10 +10,21 @@ const app = express();
 
 app.use(helmet());
 app.use(express.json());
+// CORS configuration
+const corsOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
+  : [
+      "https://mostafaeslam.github.io",
+      "http://localhost:8000",
+      "http://localhost:3000",
+      "http://127.0.0.1:8000",
+    ];
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN?.split(",") || "*",
+    origin: corsOrigins,
     methods: ["POST", "GET", "OPTIONS"],
+    credentials: true,
   })
 );
 app.use(morgan("tiny"));
