@@ -97,54 +97,7 @@ npm run dev
 # Open index.html in your browser or serve with a local server
 python -m http.server 8000
 # Then visit http://localhost:8000
-```
-
-## 🌐 Deployment
-
-### Frontend Deployment (Vercel - Recommended)
-
-1. **Push to GitHub**
-```bash
-git add .
-git commit -m "Initial commit"
-git push origin main
-```
-
-2. **Deploy to Vercel**
-- Go to [vercel.com](https://vercel.com)
-- Import your GitHub repository
-- Deploy automatically
-
-3. **Configure Custom Domain**
-- Add your domain in Vercel dashboard
-- Update DNS records as instructed
-
-### Backend Deployment (Railway - Recommended)
-
-1. **Deploy to Railway**
-- Go to [railway.app](https://railway.app)
-- Connect your GitHub repository
-- Deploy the backend folder
-- Configure environment variables
-
-2. **Update Frontend**
-- Update the API URL in your frontend code
-
-## 📧 Contact Form Setup
-
-The contact form requires backend configuration:
-
-1. **Email Service** (Choose one):
-   - **Gmail**: Use your Gmail credentials
-   - **SendGrid**: Professional email service
-   - **Mailgun**: Developer-friendly email API
-
-2. **Environment Variables**:
-```env
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
-EMAIL_SERVICE=gmail
-```
+``` 
 
 ## 🎨 Customization
 
