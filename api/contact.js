@@ -2,13 +2,18 @@ import nodemailer from "nodemailer";
 
 // Create transporter
 function createTransporter() {
+  const host = process.env.SMTP_HOST?.trim();
+  const user = process.env.SMTP_USER?.trim();
+  const pass = process.env.SMTP_PASS?.trim();
+  const port = Number(process.env.SMTP_PORT || 587);
+
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.gmail.com",
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: false,
+    host,
+    port,
+    secure: port === 465, // Use secure for port 465
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user,
+      pass,
     },
   });
 }
@@ -66,9 +71,23 @@ export default async function handler(req, res) {
     });
   }
 
-  // Check if SMTP credentials are configured
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+  // Check if SMTP credentials are configured (checking for non-empty strings)
+  const smtpHost = process.env.SMTP_HOST?.trim();
+  const smtpUser = process.env.SMTP_USER?.trim();
+  const smtpPass = process.env.SMTP_PASS?.trim();
+
+  if (
+    !smtpHost ||
+    !smtpUser ||
+    !smtpPass ||
+    smtpHost.length === 0 ||
+    smtpUser.length === 0 ||
+    smtpPass.length === 0
+  ) {
     console.error("SMTP credentials not configured");
+    console.error("SMTP_HOST:", smtpHost ? "✓" : "✗");
+    console.error("SMTP_USER:", smtpUser ? "✓" : "✗");
+    console.error("SMTP_PASS:", smtpPass ? "✓" : "✗");
     return res.status(500).json({
       ok: false,
       error:
@@ -78,10 +97,10 @@ export default async function handler(req, res) {
 
   try {
     const transporter = createTransporter();
-    const to = process.env.MAIL_TO || process.env.SMTP_USER;
+    const to = process.env.MAIL_TO?.trim() || smtpUser;
 
     const info = await transporter.sendMail({
-      from: `Portfolio Contact <${process.env.SMTP_USER}>`,
+      from: `Portfolio Contact <${smtpUser}>`,
       to,
       replyTo: email,
       subject: `[Portfolio] ${subject}`,
