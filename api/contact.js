@@ -75,6 +75,29 @@ export default async function handler(req, res) {
   const smtpHost = process.env.SMTP_HOST?.trim();
   const smtpUser = process.env.SMTP_USER?.trim();
   const smtpPass = process.env.SMTP_PASS?.trim();
+  const smtpPort = process.env.SMTP_PORT?.trim();
+
+  // Enhanced logging for debugging
+  console.log("Environment check:");
+  console.log(
+    "SMTP_HOST:",
+    smtpHost ? `✓ (${smtpHost.length} chars)` : "✗ (undefined or empty)"
+  );
+  console.log(
+    "SMTP_USER:",
+    smtpUser ? `✓ (${smtpUser.length} chars)` : "✗ (undefined or empty)"
+  );
+  console.log(
+    "SMTP_PASS:",
+    smtpPass ? `✓ (${smtpPass.length} chars)` : "✗ (undefined or empty)"
+  );
+  console.log("SMTP_PORT:", smtpPort || "587 (default)");
+  console.log(
+    "All env keys:",
+    Object.keys(process.env)
+      .filter((k) => k.startsWith("SMTP"))
+      .join(", ")
+  );
 
   if (
     !smtpHost ||
@@ -85,9 +108,6 @@ export default async function handler(req, res) {
     smtpPass.length === 0
   ) {
     console.error("SMTP credentials not configured");
-    console.error("SMTP_HOST:", smtpHost ? "✓" : "✗");
-    console.error("SMTP_USER:", smtpUser ? "✓" : "✗");
-    console.error("SMTP_PASS:", smtpPass ? "✓" : "✗");
     return res.status(500).json({
       ok: false,
       error:
