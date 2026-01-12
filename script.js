@@ -342,10 +342,22 @@ if (contactForm) {
 
       if (!res.ok) {
         let errMsg = "Failed to send message. Please try again later.";
+        
+        // Log the actual error for debugging
+        console.error("API Error:", {
+          status: res.status,
+          statusText: res.statusText,
+          data: data
+        });
 
         if (res.status === 0 || res.status >= 500) {
-          errMsg =
-            "Server error. Please check if the backend is running and try again.";
+          // Show the actual error message from the server if available
+          if (data?.error) {
+            errMsg = data.error;
+          } else {
+            errMsg =
+              "Server error. Please check if the backend is running and try again.";
+          }
         } else if (res.status === 404) {
           errMsg =
             "API endpoint not found. Please check the API URL configuration.";
@@ -376,13 +388,14 @@ if (contactForm) {
       // Network-level or unexpected error
       let errMsg = "Failed to send message. Please try again later.";
 
+      console.error("Contact form error:", err);
+      
       if (err.name === "TypeError" && err.message.includes("fetch")) {
         errMsg = `Cannot connect to the server. Please check if the backend is running at ${apiUrl}. If deployed, make sure the API URL is configured correctly.`;
       } else if (err.message) {
         errMsg = err.message;
       }
 
-      console.error("Contact form error:", err);
       showNotification(errMsg, "error");
       submitButton.disabled = false;
       submitButton.textContent = originalButtonText;
