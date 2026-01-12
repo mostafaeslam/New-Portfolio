@@ -1,16 +1,11 @@
 import nodemailer from "nodemailer";
 
-// Create transporter
-function createTransporter() {
-  const host = process.env.SMTP_HOST?.trim();
-  const user = process.env.SMTP_USER?.trim();
-  const pass = process.env.SMTP_PASS?.trim();
-  const port = Number(process.env.SMTP_PORT || 587);
-
+// Create transporter with validated credentials
+function createTransporter(host, user, pass, port) {
   return nodemailer.createTransport({
     host,
-    port,
-    secure: port === 465, // Use secure for port 465
+    port: Number(port),
+    secure: Number(port) === 465, // Use secure for port 465
     auth: {
       user,
       pass,
@@ -72,42 +67,76 @@ export default async function handler(req, res) {
   }
 
   // Check if SMTP credentials are configured (checking for non-empty strings)
-  const smtpHost = process.env.SMTP_HOST?.trim();
-  const smtpUser = process.env.SMTP_USER?.trim();
-  const smtpPass = process.env.SMTP_PASS?.trim();
-  const smtpPort = process.env.SMTP_PORT?.trim();
+  // Handle both undefined and empty string cases
+  const smtpHostRaw = process.env.SMTP_HOST;
+  const smtpUserRaw = process.env.SMTP_USER;
+  const smtpPassRaw = process.env.SMTP_PASS;
+  const smtpPortRaw = process.env.SMTP_PORT;
+
+  const smtpHost = smtpHostRaw?.trim() || "";
+  const smtpUser = smtpUserRaw?.trim() || "";
+  const smtpPass = smtpPassRaw?.trim() || "";
+  const smtpPort = smtpPortRaw?.trim() || "587";
 
   // Enhanced logging for debugging
-  console.log("Environment check:");
+  console.log("=== Environment Variable Check ===");
   console.log(
     "SMTP_HOST:",
-    smtpHost ? `✓ (${smtpHost.length} chars)` : "✗ (undefined or empty)"
+    smtpHostRaw !== undefined
+      ? smtpHost
+        ? `✓ Set (${smtpHost.length} chars)`
+        : "✗ Empty string"
+      : "✗ Not defined"
   );
   console.log(
     "SMTP_USER:",
-    smtpUser ? `✓ (${smtpUser.length} chars)` : "✗ (undefined or empty)"
+    smtpUserRaw !== undefined
+      ? smtpUser
+        ? `✓ Set (${smtpUser.length} chars)`
+        : "✗ Empty string"
+      : "✗ Not defined"
   );
   console.log(
     "SMTP_PASS:",
-    smtpPass ? `✓ (${smtpPass.length} chars)` : "✗ (undefined or empty)"
+    smtpPassRaw !== undefined
+      ? smtpPass
+        ? `✓ Set (${smtpPass.length} chars)`
+        : "✗ Empty string"
+      : "✗ Not defined"
   );
-  console.log("SMTP_PORT:", smtpPort || "587 (default)");
   console.log(
-    "All env keys:",
-    Object.keys(process.env)
-      .filter((k) => k.startsWith("SMTP"))
-      .join(", ")
+    "SMTP_PORT:",
+    smtpPortRaw !== undefined ? smtpPort : "587 (default)"
+  );
+  console.log(
+    "MAIL_TO:",
+    process.env.MAIL_TO ? "✓ Set" : "✗ Not set (will use SMTP_USER)"
   );
 
-  if (
-    !smtpHost ||
-    !smtpUser ||
-    !smtpPass ||
-    smtpHost.length === 0 ||
-    smtpUser.length === 0 ||
-    smtpPass.length === 0
-  ) {
-    console.error("SMTP credentials not configured");
+  // List all SMTP-related env vars
+  const smtpEnvKeys = Object.keys(process.env).filter(
+    (k) => k.startsWith("SMTP") || k === "MAIL_TO"
+  );
+  console.log(
+    "Available SMTP env keys:",
+    smtpEnvKeys.length > 0 ? smtpEnvKeys.join(", ") : "None found"
+  );
+  console.log("===================================");
+
+  // Validate that all required variables are present and non-empty
+  const missingVars = [];
+  if (!smtpHost || smtpHost.length === 0) missingVars.push("SMTP_HOST");
+  if (!smtpUser || smtpUser.length === 0) missingVars.push("SMTP_USER");
+  if (!smtpPass || smtpPass.length === 0) missingVars.push("SMTP_PASS");
+
+  if (missingVars.length > 0) {
+    console.error(
+      "❌ SMTP credentials not configured. Missing:",
+      missingVars.join(", ")
+    );
+    console.error(
+      "💡 Make sure environment variables are set in Vercel and the project has been redeployed."
+    );
     return res.status(500).json({
       ok: false,
       error:
@@ -116,7 +145,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const transporter = createTransporter();
+    const transporter = createTransporter(
+      smtpHost,
+      smtpUser,
+      smtpPass,
+      smtpPort
+    );
     const to = process.env.MAIL_TO?.trim() || smtpUser;
 
     const info = await transporter.sendMail({
