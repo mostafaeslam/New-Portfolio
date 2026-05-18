@@ -1,0 +1,39 @@
+{
+  "name": "mostafa-eslam-portfolio",
+  "version": "1.0.0",
+  "description": "AI Engineer Portfolio - Modern responsive website showcasing AI/ML projects and skills",
+  "main": "index.html",
+  "scripts": {
+    "dev": "cd backend && npm run dev",
+    "start": "cd backend && npm start",
+    "serve": "python -m http.server 8000",
+    "install-backend": "cd backend && npm install"
+  },
+  "keywords": [
+    "portfolio",
+    "ai",
+    "machine-learning",
+    "deep-learning",
+    "computer-vision",
+    "nlp",
+    "frontend",
+    "responsive",
+    "javascript",
+    "html",
+    "css"
+  ],
+  "author": "Mostafa Eslam Elsayed",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/portfolio.git"
+  },
+  "homepage": "https://yourportfolio.com",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "nodemailer": "^6.9.13"
+  }
+}
